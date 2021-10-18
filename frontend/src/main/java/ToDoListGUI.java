@@ -15,21 +15,42 @@ public class ToDoListGUI extends JFrame {
 
     private Color background = new Color(55, 86, 150);
     private String sessionId;
-    JPanel contentPane;
-    JPanel formPane;
+    private String role;
+    private JMenu menu;
+    private JMenuBar menuBar;
+    private JPanel contentPane;
+    private JPanel formPane;
 
-    public ToDoListGUI(String Id){
+    public ToDoListGUI(String Id, String role){
         this.sessionId = Id;
+        this.role = role;
         //System.out.println("TodoList"+Id);
         init();
 
     }
 
     public void init(){
+        //menu
+        menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+        menu = new JMenu("More");
+        JMenuItem menuItem1 = new JMenuItem("My Information");
+        menuItem1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "You are " + role, "tips", JOptionPane.PLAIN_MESSAGE);
+            }
+        });
+        menu.add(menuItem1);
+        menuBar.add(menu);
+        addMoreMenuItem();
+
+        setTitle("FormList");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 800);
         setResizable(false);
         setLocationRelativeTo(null);
+
         //panel
         contentPane = new JPanel();
         contentPane.setBackground(background);
@@ -86,6 +107,51 @@ public class ToDoListGUI extends JFrame {
 
         refresh();
         setVisible(true);
+    }
+
+    private void addMoreMenuItem() {
+        if(role.equals("CS")){
+            JMenuItem menuItem = new JMenuItem("Create Event Form");
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    EventForm fm = EventForm.createEventForm("EVENT");
+                    new FormGUI(fm);
+                }
+            });
+            menu.add(menuItem);
+        }
+        else if(role.equals("SM/PM")){
+            JMenuItem menuItem1 = new JMenuItem("Task Distribution");
+            menuItem1.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    TaskForm fm = TaskForm.createTaskForm("TASK");
+                    new FormGUI(fm);
+                }
+            });
+            JMenuItem menuItem2 = new JMenuItem("Staff Recruitment Request");
+            menuItem2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    FinancialForm fm = FinancialForm.createFinancialForm("HR");
+                    new FormGUI(fm);
+                }
+            });
+            JMenuItem menuItem3 = new JMenuItem("Financial Requests");
+            menuItem3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    RecruiForm fm = RecruiForm.createRecruiForm("FINANCIAL");
+                    new FormGUI(fm);
+                }
+            });
+            menu.add(menuItem1);
+            menu.add(menuItem2);
+            menu.add(menuItem3);
+        }
+
+
     }
 
     public void refresh(){
@@ -172,6 +238,6 @@ public class ToDoListGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ToDoListGUI("996b41c62520dc9a158561825436c565");
+        new ToDoListGUI("996b41c62520dc9a158561825436c565", "SM/PM");
     }
 }
