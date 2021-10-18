@@ -7,19 +7,19 @@ import java.util.Map;
 
 public class ListJsonGenerator {
 
-    private Map<String, Object> map;
-    private List<Map<String, Object>> list;
+    private Map<String, String> map;
+    private List<Map<String, String>> list;
 
     public ListJsonGenerator(){
         list = new ArrayList<>();
     }
 
-    public Map<String, Object> createMap(){
+    public Map<String, String> createMap(){
         map = new HashMap<>();
         return map;
     }
 
-    public void addInList(Map<String, Object> map){
+    public void addInList(Map<String, String> map){
         list.add(map);
     }
     public String output(){

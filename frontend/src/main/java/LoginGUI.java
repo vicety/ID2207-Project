@@ -88,11 +88,14 @@ public class LoginGUI extends JFrame {
                 if (loginjson.status.equals("ok")){
                     //Customer Service
                     if(loginjson.role.equals("CS")){
-                        System.out.println("CS");
+                        System.out.println(loginjson.sessionId);
+                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId);
                         dispose();
                     }
                     //Senior Customer Service
                     else if(loginjson.role.equals("SCS")){
+                        System.out.println(loginjson.sessionId);
+                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId);
                         dispose();
                     }
                     //Financial
@@ -102,12 +105,18 @@ public class LoginGUI extends JFrame {
                         dispose();
                     }
                     else if(loginjson.role.equals("AM")){
+                        System.out.println(loginjson.sessionId);
+                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId);
                         dispose();
                     }
                     else if(loginjson.role.equals("SM/PM")){
+                        System.out.println(loginjson.sessionId);
+                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId);
                         dispose();
                     }
                     else if(loginjson.role.equals("SUB")) {
+                        System.out.println(loginjson.sessionId);
+                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId);
                         dispose();
                     }
                 }

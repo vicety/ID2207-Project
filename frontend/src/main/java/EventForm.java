@@ -5,18 +5,34 @@ import java.util.Date;
 public class EventForm extends Form{
     //Customer Service; Senior CS; Financial Manager; Administration Manager
 
-    private  String clientName;
-    private Date from;
-    private Date to;
-    private int number;
-    private String prefer; //DECORATION,PARTY,PHOTO,MEAL,DRINK;
-    private String expectedBudget;
-    private String status; //PEND, REJ, AD;
+    public String clientName;
+    public String from;
+    public String to;
+    public int number;
+    public String prefer; //DECORATION,PARTY,PHOTO,MEAL,DRINK;
+    public String expectedBudget;
+    public String status; //PEND, REJ, AD;
 
-    public EventForm getEventForm(String sessionId, String formId){
+
+    public static EventForm getEventForm(String formId,String sessionId){
         //POST
         String msg ="{\"sessionId\":\"" + sessionId + "\",\"formId\":\"" + formId +"\"}";
+        //System.out.println(msg);
         String url = "http://3.133.82.240:8080/reqForm1";
+        Requester rster= new Requester(url, msg);
+        String res = rster.getRes();
+        //PARSE
+        Gson gson = new Gson();
+        EventForm eventForm= gson.fromJson(res, EventForm.class);
+        //RETURN
+        return eventForm;
+    }
+
+    public static EventForm createEventForm(String formType){
+        //POST
+        String msg ="{\"formType\":\"" + formType + "\"}";
+        System.out.println(msg);
+        String url = "http://3.133.82.240:8080/initForm";
         Requester rster= new Requester(url, msg);
         String res = rster.getRes();
         //PARSE

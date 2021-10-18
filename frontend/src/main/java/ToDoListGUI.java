@@ -5,17 +5,22 @@ import com.google.gson.JsonParser;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class ToDoListGUI extends JFrame {
+
+    private Color background = new Color(55, 86, 150);
     private String sessionId;
     JPanel contentPane;
     JPanel formPane;
 
     public ToDoListGUI(String Id){
         this.sessionId = Id;
-
+        //System.out.println("TodoList"+Id);
         init();
 
     }
@@ -27,16 +32,17 @@ public class ToDoListGUI extends JFrame {
         setLocationRelativeTo(null);
         //panel
         contentPane = new JPanel();
+        contentPane.setBackground(background);
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(0, 0));
         //north
         JPanel title = new JPanel();
-        JLabel cart = new JLabel("ToDoList");
-        cart.setForeground(new Color(55, 86, 150));
-        cart.setFont(new Font("Segoe Print", Font.BOLD, 50));
+        JLabel a1 = new JLabel("ToDoList");
+        a1.setForeground(new Color(55, 86, 150));
+        a1.setFont(new Font("Segoe Print", Font.BOLD, 50));
         title.setPreferredSize(new Dimension(600, 80));
-        title.add(cart);
+        title.add(a1);
         contentPane.add(title, BorderLayout.NORTH);
         //CENTER
         formPane = new JPanel();
@@ -50,19 +56,48 @@ public class ToDoListGUI extends JFrame {
         contentPane.add(btnPane, BorderLayout.SOUTH);
         btnPane.setPreferredSize(new Dimension(600, 100));
         btnPane.setLayout(null);
-        setVisible(true);
+
+        Button rereshbt = new Button("REFRESH", background );
+        rereshbt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "ToDoList Updated", "tips", JOptionPane.PLAIN_MESSAGE);
+                refresh();
+            }
+        });
+        rereshbt.setFont(new Font("Arial", Font.BOLD, 15));
+        rereshbt.setForeground(Color.WHITE);
+        rereshbt.setBounds(400, 25, 119, 65);
+        btnPane.add(rereshbt);
+
+        Button backbt = new Button("BACK", background );
+        backbt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new LoginGUI();
+            }
+        });
+        backbt.setFont(new Font("Arial", Font.BOLD, 15));
+        backbt.setForeground(Color.WHITE);
+        backbt.setBounds(55, 25, 119, 65);
+        btnPane.add(backbt);
+
 
         refresh();
+        setVisible(true);
     }
 
     public void refresh(){
+        formPane.removeAll();
         //POST
         String msg ="{\"sessionId\":\"" + sessionId + "\"}";
         String url = "http://3.133.82.240:8080/reqFormList";
         Requester rster= new Requester(url, msg);
-        //String res = rster.getRes();
-        String res="[{\"formId\":\"123\",\"formType\":\"EVENT\"}," +
-                "{\"formId\":\"123\"}]";
+        String res = rster.getRes();
+        System.out.println(res);
+        //String res="[{\"formId\":\"123\",\"formType\":\"EVENT\"}," +
+        //       "{\"formId\":\"321\",\"formType\":\"EVENT\"}]";
         //PARSE
         //创建Gson对象
         Gson gson = new Gson();
@@ -73,12 +108,13 @@ public class ToDoListGUI extends JFrame {
         //遍历JsonArray对象中的elements
         for (JsonElement bean : jsonElements) {
             Form bean1 = gson.fromJson(bean, Form.class);//解析
+            //model.addRow(new String[] { bean1.formId, bean1.formType });
             beans.add(bean1);
         }
-        System.out.println(beans.size());
+        //System.out.println("ID"+beans.get(0).formId);
+        //System.out.println("ID"+beans.get(0).formType);
 
-        JPanel[] panels = new JPanel[beans.size()];
-        GridBagLayout g = new GridBagLayout();
+        Button[] formButton = new Button[beans.size()];
 
         if(beans.size() == 0) {
             JLabel emptyMsg = new JLabel("Nothing here", JLabel.CENTER);
@@ -89,24 +125,53 @@ public class ToDoListGUI extends JFrame {
             formPane.add(emptyPane);
         }
         else
-            formPane.setLayout(g);
+            formPane.setLayout(new GridLayout(6,1,20,20));
 
-        for(int i = 0; i < panels.length; i++){
+        for(int i = 0; i < formButton.length; i++){
             GridBagConstraints gc = new GridBagConstraints();
-            panels[i] = new JPanel();
-            JLabel id = new JLabel(beans.get(i).formId);
-            JLabel type = new JLabel(beans.get(i).formType);
-            gc.gridx = 0;
-            gc.ipadx = 60;
-            g.addLayoutComponent(id, gc);
-            g.addLayoutComponent(type, gc);
-            formPane.add(id);
-            formPane.add(type);
+            formButton[i] = new Button("Form ID: "+beans.get(i).formId+"     Form Type: "+beans.get(i).formType);
+            formButton[i].setFont(new Font("Segoe Print", Font.BOLD, 20));
+            formButton[i].setForeground(Color.BLACK);
+            formButton[i].addActionListener(new requestFormListener(beans.get(i)));
+            formPane.add(formButton[i]);
+
         }
+
+
         revalidate();
     }
 
+    class requestFormListener implements ActionListener{
+        Form b;
+        requestFormListener(Form bean){
+            b = bean;
+        }
+        public void actionPerformed(ActionEvent e) {
+            if(b.formType.equals("EVENT")){
+                System.out.println("Event"+sessionId);
+                EventForm fm = EventForm.getEventForm(b.formId,sessionId);
+                new FormGUI(fm);
+            }
+            else if (b.formType.equals("TASK")){
+                System.out.println("TASK"+sessionId);
+                TaskForm fm = TaskForm.getTaskForm(b.formId,sessionId);
+                new FormGUI(fm);
+            }
+            else if (b.formType.equals("HR")){
+                System.out.println("HR"+sessionId);
+                RecruiForm fm = RecruiForm.getRecruiForm(b.formId,sessionId);
+                new FormGUI(fm);
+            }
+            else if (b.formType.equals("FINANCIAL")){
+                System.out.println("FINANCIAL"+sessionId);
+                FinancialForm fm = FinancialForm.getFinancialForm(b.formId,sessionId);
+                new FormGUI(fm);
+
+            }
+        }
+    }
+
     public static void main(String[] args) {
-        new ToDoListGUI("123");
+        new ToDoListGUI("996b41c62520dc9a158561825436c565");
     }
 }

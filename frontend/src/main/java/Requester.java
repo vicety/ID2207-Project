@@ -20,6 +20,7 @@ public class Requester {
                 .build();
         try(Response response = client.newCall(request).execute()){
             res = response.body().string();
+            System.out.println("return value:"+res);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
