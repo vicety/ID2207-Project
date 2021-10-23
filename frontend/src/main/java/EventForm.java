@@ -8,7 +8,7 @@ public class EventForm extends Form{
     public String clientName;
     public String from;
     public String to;
-    public int number;
+    public String number;
     public String prefer; //DECORATION,PARTY,PHOTO,MEAL,DRINK;
     public String expectedBudget;
     public String status; //PEND, REJ, AD;

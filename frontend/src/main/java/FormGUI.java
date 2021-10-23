@@ -65,11 +65,12 @@ public class FormGUI extends JFrame {
         });
         contentPane.add(new JScrollPane(table),BorderLayout.CENTER);
 
-        Button okb = new Button("Send!");
+        Button okb = new Button("Confirm!");
         okb.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Form.confirmForm(fm.formId);
+
                 dispose();
             }
         });

@@ -2,7 +2,7 @@ import com.google.gson.Gson;
 
 public class FinancialForm extends Form{
         public String department;
-		public int amount;
+		public String amount;
 		public String reason;
 
     public static FinancialForm getFinancialForm(String formId,String sessionId){

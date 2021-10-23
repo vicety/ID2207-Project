@@ -20,7 +20,6 @@ public class Form {
         Gson gson = new Gson();
         Check check = gson.fromJson(res, Check.class);
         if (check.status.equals("ok")){
-            JOptionPane.showMessageDialog(null, "Modified successfully", "tips", JOptionPane.PLAIN_MESSAGE);
             System.out.println("Modify!");
         }
 
@@ -37,7 +36,7 @@ public class Form {
         Gson gson = new Gson();
         Check check = gson.fromJson(res, Check.class);
         if (check.status.equals("ok")){
-            System.out.println("Modify!");
+            System.out.println("Confirm!");
         }
     }
     public class Check{

@@ -87,39 +87,12 @@ public class LoginGUI extends JFrame {
                 Gson gson = new Gson();
                 LoginJSON  loginjson= gson.fromJson(res, LoginJSON.class);
                 if (loginjson.status.equals("ok")){
-                    //Customer Service
-                    if(loginjson.role.equals("CS")){
-                        System.out.println(loginjson.sessionId);
-                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId, loginjson.role);
-                        dispose();
-                    }
-                    //Senior Customer Service
-                    else if(loginjson.role.equals("SCS")){
-                        System.out.println(loginjson.sessionId);
-                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId, loginjson.role);
-                        dispose();
-                    }
-                    //Financial
-                    else if(loginjson.role.equals("FM")){
-                        System.out.println(loginjson.sessionId);
-                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId, loginjson.role);
-                        dispose();
-                    }
-                    else if(loginjson.role.equals("AM")){
-                        System.out.println(loginjson.sessionId);
-                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId, loginjson.role);
-                        dispose();
-                    }
-                    else if(loginjson.role.equals("SM/PM")){
-                        System.out.println(loginjson.sessionId);
-                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId, loginjson.role);
-                        dispose();
-                    }
-                    else if(loginjson.role.equals("SUB")) {
-                        System.out.println(loginjson.sessionId);
-                        ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId, loginjson.role);
-                        dispose();
-                    }
+                    System.out.println(loginjson.sessionId);
+                    ToDoListGUI todolistgui = new ToDoListGUI(loginjson.sessionId, loginjson.role);
+                    dispose();
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Password Wrong", "tips", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

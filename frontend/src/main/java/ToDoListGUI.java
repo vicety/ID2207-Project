@@ -20,6 +20,7 @@ public class ToDoListGUI extends JFrame {
     private JMenuBar menuBar;
     private JPanel contentPane;
     private JPanel formPane;
+    private Box vertical1;
 
     public ToDoListGUI(String Id, String role){
         this.sessionId = Id;
@@ -47,7 +48,7 @@ public class ToDoListGUI extends JFrame {
 
         setTitle("FormList");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 800);
+        setSize(650, 800);
         setResizable(false);
         setLocationRelativeTo(null);
 
@@ -67,9 +68,11 @@ public class ToDoListGUI extends JFrame {
         contentPane.add(title, BorderLayout.NORTH);
         //CENTER
         formPane = new JPanel();
+        //vertical1 = Box.createVerticalBox();
         JScrollPane sp = new JScrollPane();
         sp.setViewportView(formPane);
-        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        //sp.setViewportView(vertical1);
+        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         contentPane.add(sp, BorderLayout.CENTER);
         //SOUTH
@@ -88,7 +91,7 @@ public class ToDoListGUI extends JFrame {
         });
         rereshbt.setFont(new Font("Arial", Font.BOLD, 15));
         rereshbt.setForeground(Color.WHITE);
-        rereshbt.setBounds(400, 25, 119, 65);
+        rereshbt.setBounds(400, 25, 170, 65);
         btnPane.add(rereshbt);
 
         Button backbt = new Button("BACK", background );
@@ -134,7 +137,7 @@ public class ToDoListGUI extends JFrame {
             menuItem2.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    FinancialForm fm = FinancialForm.createFinancialForm("HR");
+                    RecruiForm fm = RecruiForm.createRecruiForm("HR");
                     new FormGUI(fm);
                 }
             });
@@ -142,7 +145,7 @@ public class ToDoListGUI extends JFrame {
             menuItem3.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    RecruiForm fm = RecruiForm.createRecruiForm("FINANCIAL");
+                    FinancialForm fm = FinancialForm.createFinancialForm("FINANCIAL");
                     new FormGUI(fm);
                 }
             });
@@ -190,16 +193,24 @@ public class ToDoListGUI extends JFrame {
             emptyPane.add(emptyMsg, BorderLayout.SOUTH);
             formPane.add(emptyPane);
         }
-        else
-            formPane.setLayout(new GridLayout(6,1,20,20));
+        else {
+            //formPane.setLayout(new GridLayout(6,1,20,20));
+            //formPane.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 40));
+            //vertical1.add(Box.createVerticalStrut(25));
+            formPane.setLayout(new BoxLayout(formPane, BoxLayout.Y_AXIS));
 
+        }
         for(int i = 0; i < formButton.length; i++){
             GridBagConstraints gc = new GridBagConstraints();
             formButton[i] = new Button("Form ID: "+beans.get(i).formId+"     Form Type: "+beans.get(i).formType);
             formButton[i].setFont(new Font("Segoe Print", Font.BOLD, 20));
             formButton[i].setForeground(Color.BLACK);
             formButton[i].addActionListener(new requestFormListener(beans.get(i)));
+            formButton[i].setAlignmentX(Component.CENTER_ALIGNMENT);
             formPane.add(formButton[i]);
+            formPane.add(Box.createVerticalStrut(25));
+            //vertical1.add(formButton[i]);
+            //vertical1.add(Box.createVerticalStrut(25));
 
         }
 
