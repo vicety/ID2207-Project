@@ -7,7 +7,9 @@ type Error struct {
 }
 
 var (
+	UserNotExist  = fmt.Errorf("User Not Exist")
 	InvalidUser   = fmt.Errorf("Invalid User")
+	FormNotExist  = fmt.Errorf("Form Not Exist")
 	InternalError = fmt.Errorf("Internal Error")
 )
 
