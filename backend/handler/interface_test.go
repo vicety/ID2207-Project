@@ -15,8 +15,8 @@ func TestLogin(t *testing.T) {
 	model.InitData()
 
 	_, err = handleLogin(&LoginRequest{User: model.User{
-		UserName: "ss",
-		Password: "dd",
+		UserName: "user not exist",
+		Password: "pwd not exist",
 	}})
 	assert.Equal(t, errors.InvalidUser, err)
 
