@@ -20,6 +20,8 @@ Reference: https://beginnersbook.com/2013/05/first-java-program
 
 For backend
 
+(note that the compiled binary file (for Windows and Linux) is already included in the root path)
+
 1. Install Golang (version greater than 1.14 should be ok)
 
 2. Compile in either Linux (recommended) or Windows with following command
