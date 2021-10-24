@@ -12,11 +12,11 @@ func TestGetUser(t *testing.T) {
 
 	InitData()
 
-	//err = CreateUser(config.DB, &User{
-	//	UserName: "uname",
-	//	Password: "pwd",
-	//})
-	//assert.Nil(t, err)
+	err = CreateUser(config.DB, &User{
+		UserName: "uname",
+		Password: "pwd",
+	})
+	assert.Nil(t, err)
 
 	_, err = GetUser(config.DB, "user not exist")
 	//assert.Equal(t, errors.InvalidUser(), err)

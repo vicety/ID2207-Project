@@ -85,21 +85,28 @@ func ReqFormList(c *gin.Context) {
 		return
 	}
 
-	user, err := model.GetUserFromSid(config.DB, request.SessionId.SessionId)
-	if err == gorm.ErrRecordNotFound {
-		c.JSON(http.StatusOK, errors.UserNotExist.Error())
-		return
-	} else if err != nil {
-		fmt.Printf("Failed to lookup user from sid, err: %v\n", err)
+	ans, err := handleReqFormList(request)
+	if err != nil {
 		c.Status(http.StatusBadRequest)
 		return
+	}
+
+	c.JSON(http.StatusOK, ans)
+}
+
+func handleReqFormList(request *ReqFormListRequest) ([]ReqFormListResponseItem, error) {
+	user, err := model.GetUserFromSid(config.DB, request.SessionId.SessionId)
+	if err == gorm.ErrRecordNotFound {
+		return nil, errors.UserNotExist
+	} else if err != nil {
+		fmt.Printf("Failed to lookup user from sid, err: %v\n", err)
+		return nil, err
 	}
 
 	resp, err := model.GetFormByUser(config.DB, user.UserName)
 	if err != nil {
 		fmt.Printf("Failed to get form by user, err: %v\n", err)
-		c.Status(http.StatusBadRequest)
-		return
+		return nil, err
 	}
 
 	ans := make([]ReqFormListResponseItem, 0)
@@ -110,8 +117,7 @@ func ReqFormList(c *gin.Context) {
 		})
 	}
 
-	// TODO: convert to specific form?
-	c.JSON(http.StatusOK, ans)
+	return ans, nil
 }
 
 func ReqEvent(c *gin.Context) {
@@ -122,29 +128,33 @@ func ReqEvent(c *gin.Context) {
 		return
 	}
 
-	form, err := model.GetForm(config.DB, request.FormId)
-	if err == gorm.ErrRecordNotFound {
-		c.JSON(http.StatusOK, errors.UserNotExist.Error())
-		return
-	}
+	form, err := handleReqEvent(request)
 	if err != nil {
-		fmt.Printf("Failed to get form by formId, err: %v\n", err)
 		c.Status(http.StatusBadRequest)
 		return
 	}
 
+	c.JSON(http.StatusOK, form)
+}
+
+func handleReqEvent(request *ReqEventRequest) (interface{}, error) {
+	form, err := model.GetForm(config.DB, request.FormId)
+	if err == gorm.ErrRecordNotFound {
+		return nil, errors.UserNotExist
+	}
+	if err != nil {
+		fmt.Printf("Failed to get form by formId, err: %v\n", err)
+		return nil, err
+	}
+
 	if form.FormType == "EVENT" {
-		c.JSON(http.StatusOK, form.ToEventForm())
-		return
+		return form.ToEventForm(), nil
 	} else if form.FormType == "TASK" {
-		c.JSON(http.StatusOK, form.ToTaskForm())
-		return
+		return form.ToTaskForm(), nil
 	} else if form.FormType == "HR" {
-		c.JSON(http.StatusOK, form.ToRecruitmentForm())
-		return
+		return form.ToRecruitmentForm(), nil
 	} else {
-		c.JSON(http.StatusOK, form.ToFinancialForm())
-		return
+		return form.ToFinancialForm(), nil
 	}
 }
 
@@ -168,9 +178,6 @@ func ModifyForm(c *gin.Context) {
 		return
 	}
 
-	//s, _ := json.MarshalIndent(request, "", "\t")
-	//fmt.Println(string(s))
-
 	if err = model.UpdateForm(config.DB, &request.Form); err != nil {
 		fmt.Printf("Failed to update form, err: %v\n", err)
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -188,16 +195,23 @@ func ConfirmForm(c *gin.Context) {
 		return
 	}
 
-	form, err := model.GetForm(config.DB, request.FormId)
-	if err != nil {
-		fmt.Printf("Failed to get form by formId, err: %v\n", err)
+	if err := handleConfirmForm(request); err != nil {
 		c.Status(http.StatusBadRequest)
 		return
 	}
 
+	c.JSON(http.StatusOK, StatusResponse{Status: "ok"})
+}
+
+func handleConfirmForm(request *ConfirmFormRequest) error {
+	form, err := model.GetForm(config.DB, request.FormId)
+	if err != nil {
+		fmt.Printf("Failed to get form by formId, err: %v\n", err)
+		return err
+	}
+
 	if form.ResponsibleUser == "zzz" {
-		c.Status(http.StatusOK)
-		return
+		return nil
 	}
 
 	// get next type
@@ -210,19 +224,17 @@ func ConfirmForm(c *gin.Context) {
 		user, err := model.GetUserByUserType(config.DB, nextType)
 		if err != nil {
 			fmt.Printf("Failed to get user by userType %s, err: %v\n", nextType, err)
-			c.Status(http.StatusBadRequest)
-			return
+			return err
 		}
 		form.ResponsibleUser = user.UserName
 	}
 
 	if err = model.UpdateForm(config.DB, form); err != nil {
 		fmt.Printf("Failed to update form, err: %v\n", err)
-		c.Status(http.StatusBadRequest)
-		return
+		return err
 	}
 
-	c.JSON(http.StatusOK, StatusResponse{Status: "ok"})
+	return nil
 }
 
 func InitForm(c *gin.Context) {
